@@ -2,23 +2,23 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 
 public class WebCrawler {
     private HashSet<String> visitedUrls = new HashSet<>();
     private LinkedList<String> urlQueue = new LinkedList<>();
     private static final int MAX_PAGES = 10;
+    private Map<Integer, String> docIdToText = new HashMap<>();
+    private int docId = 0;
 
-    // Seed URLs
     private static final String[] SEED_URLS = {
             "https://en.wikipedia.org/wiki/List_of_pharaohs",
             "https://en.wikipedia.org/wiki/Pharaoh"
     };
 
-    public void startCrawl() {
-        // Add seed URLs to the queue
+    public Map<Integer, String> startCrawl() {
         for (String url : SEED_URLS) {
             urlQueue.add(url);
         }
@@ -28,15 +28,17 @@ public class WebCrawler {
 
             if (!visitedUrls.contains(currentUrl)) {
                 try {
-                    // Fetch and parse the page
                     Document doc = Jsoup.connect(currentUrl)
-                            .timeout(10_000) // 10-second timeout
+                            .timeout(10_000)
                             .get();
 
                     visitedUrls.add(currentUrl);
                     System.out.println("Crawled: " + currentUrl);
 
-                    // Extract links and add valid ones to the queue
+                    // Store the text
+                    String cleanText = doc.body().text();
+                    docIdToText.put(docId++, cleanText);
+
                     extractAndEnqueueLinks(doc);
 
                 } catch (IOException e) {
@@ -44,19 +46,18 @@ public class WebCrawler {
                 }
             }
         }
+
+        return docIdToText;
     }
 
     private void extractAndEnqueueLinks(Document doc) {
-        Elements links = doc.select("a[href]"); // Get all <a> tags with href
-
+        Elements links = doc.select("a[href]");
         for (Element link : links) {
-            String url = link.absUrl("href"); // Resolve to absolute URL
-
-            // Filter: Stay within Wikipedia, avoid duplicates, and limit to 10 pages
-            if (url.startsWith("https://en.wikipedia.org/")
+            String url = link.absUrl("href");
+            if (url.startsWith("https://en.wikipedia.org/wiki/")
                     && !visitedUrls.contains(url)
+                    && !urlQueue.contains(url)
                     && visitedUrls.size() < MAX_PAGES) {
-
                 urlQueue.add(url);
             }
         }
