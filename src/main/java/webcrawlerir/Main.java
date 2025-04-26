@@ -32,5 +32,18 @@ public class Main {
         } else {
             System.out.println("Term '" + testTerm + "' is not found in the inverted index.");
         }
+           //step 5 TF-IDF Calculator
+        int documentSize=invertedIndex.getTotalDocs();
+        HashMap<String, List<Posting>> inde=invertedIndex.getIndex();
+        TFIDFCalculator calculator = new TFIDFCalculator( documentSize,inde);
+        calculator.operation();
+        System.out.println("==== Term Frequency ====");
+        calculator.print_term_frq();
+        System.out.println("==== Inverse Document Frequency ====");
+        calculator.print_idf();
+        System.out.println("==== TF-IDF Table ====");
+        calculator.Print_TfIdfTable();
+        System.out.println("==== Norms ====");
+        calculator.print_norm();
     }
 }
