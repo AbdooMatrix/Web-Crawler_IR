@@ -1,3 +1,4 @@
+package webcrawlerir.indexing;
 
 public class Posting {
     int docId;
