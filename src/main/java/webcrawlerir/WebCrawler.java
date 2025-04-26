@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class WebCrawler {
-    HashSet<String> visitedUrls = new HashSet<>();
+    public HashSet<String> visitedUrls = new HashSet<>();
     private LinkedList<String> urlQueue = new LinkedList<>();
     private static final int MAX_PAGES = 10;
     private Map<Integer, String> docIdToText = new HashMap<>();

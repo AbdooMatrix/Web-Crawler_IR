@@ -1,32 +1,36 @@
 package webcrawlerir;
 
 import webcrawlerir.indexing.InvertedIndex;
+import webcrawlerir.indexing.Posting;
 
+import java.util.List;
 import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
+        // Step 1: Run the web crawler
         WebCrawler crawler = new WebCrawler();
         Map<Integer, String> docIdToText = crawler.startCrawl();
         System.out.println("Crawled Pages: " + crawler.visitedUrls);
 
-        // Test the TextProcessor with a sample document
-//        TextProcessor processor = new TextProcessor();
-//        String sampleText = docIdToText.get(0); // Get the text of the first document
-//        if (sampleText != null) {
-//            // Process only the first 100 characters for testing
-//            String testText = sampleText.length() > 100 ? sampleText.substring(0, 100) : sampleText;
-//            System.out.println("Sample Text: " + testText);
-//
-//            List<String> tokens = processor.processText(testText);
-//            System.out.println("Processed Tokens: " + tokens);
-//        }
-
-        // Build the InvertedIndex
+        // Step 2: Build the inverted index
         InvertedIndex invertedIndex = new InvertedIndex();
         invertedIndex.buildIndex(docIdToText);
 
-        // Print the index
+        // Step 3: Print the inverted index
         invertedIndex.printIndex();
+
+        // Step 4: Verify the inverted index
+        String testTerm = "pharaoh"; // Example term to verify
+        List<Posting> postings = invertedIndex.getIndex().get(testTerm);
+
+        if (postings != null) {
+            System.out.println("Term '" + testTerm + "' is mapped to the following documents:");
+            for (Posting posting : postings) {
+                System.out.println(posting);
+            }
+        } else {
+            System.out.println("Term '" + testTerm + "' is not found in the inverted index.");
+        }
     }
 }
