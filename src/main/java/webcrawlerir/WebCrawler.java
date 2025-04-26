@@ -57,6 +57,7 @@ public class WebCrawler {
         for (Element link : links) {
             String url = link.absUrl("href");
             if (url.startsWith("https://en.wikipedia.org/wiki/")
+                    && !url.contains("#")
                     && !visitedUrls.contains(url)
                     && !urlQueue.contains(url)
                     && visitedUrls.size() < MAX_PAGES) {

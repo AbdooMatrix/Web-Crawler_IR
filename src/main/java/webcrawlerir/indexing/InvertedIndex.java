@@ -1,7 +1,6 @@
 package webcrawlerir.indexing;
 
 import webcrawlerir.processing.TextProcessor;
-
 import java.util.*;
 
 public class InvertedIndex {
