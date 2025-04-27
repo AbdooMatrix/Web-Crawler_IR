@@ -2,11 +2,13 @@ package webcrawlerir;
 
 import webcrawlerir.indexing.InvertedIndex;
 import webcrawlerir.indexing.Posting;
+import webcrawlerir.processing.QueryProcessor;
 import webcrawlerir.processing.TFIDFCalculator;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -34,7 +36,7 @@ public class Main {
         } else {
             System.out.println("Term '" + testTerm + "' is not found in the inverted index.");
         }
-           //step 5 TF-IDF Calculator
+        // Step 5: TF-IDF Calculator
         int documentSize=invertedIndex.getTotalDocs();
         HashMap<String, List<Posting>> inde=invertedIndex.getIndex();
         TFIDFCalculator calculator = new TFIDFCalculator( documentSize,inde);
@@ -47,5 +49,14 @@ public class Main {
         calculator.Print_TfIdfTable();
         System.out.println("==== Norms ====");
         calculator.print_norm();
+        // Step 6: Query Processing
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n==== Query Processing ====");
+        System.out.println("Enter your search query:");
+
+        String query = scanner.nextLine();
+        QueryProcessor queryProcessor = new QueryProcessor(calculator);
+        queryProcessor.processQuery(query);
+    
     }
 }

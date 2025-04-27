@@ -44,7 +44,7 @@ public class InvertedIndex {
     public HashMap<String, List<Posting>> getIndex() {
         return index;
     }
-    //getter fot total num of doc
+    //getter for total num of doc
     public int getTotalDocs() {
         return totalDocs;
     }
