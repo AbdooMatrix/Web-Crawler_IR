@@ -2,7 +2,9 @@ package webcrawlerir;
 
 import webcrawlerir.indexing.InvertedIndex;
 import webcrawlerir.indexing.Posting;
+import webcrawlerir.processing.TFIDFCalculator;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
