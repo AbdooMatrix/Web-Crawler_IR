@@ -4,6 +4,7 @@ import webcrawlerir.indexing.InvertedIndex;
 import webcrawlerir.indexing.Posting;
 import webcrawlerir.processing.QueryProcessor;
 import webcrawlerir.processing.TFIDFCalculator;
+import webcrawlerir.processing.TextProcessor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,8 @@ public class Main {
         InvertedIndex invertedIndex = new InvertedIndex();
         invertedIndex.buildIndex(docIdToText);
 
-        // Step 3: Print the inverted index
+
+        // Step 3 : Print the inverted index
         invertedIndex.printIndex();
 
         // Step 4: Verify the inverted index
@@ -49,14 +51,25 @@ public class Main {
         calculator.Print_TfIdfTable();
         System.out.println("==== Norms ====");
         calculator.print_norm();
-        // Step 6: Query Processing
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("\n==== Query Processing ====");
-        System.out.println("Enter your search query:");
 
-        String query = scanner.nextLine();
-        QueryProcessor queryProcessor = new QueryProcessor(calculator);
-        queryProcessor.processQuery(query);
-    
+
+
+        // step 6: Handling user query
+        String query ;
+        System.out.println("Welcome to the Wikipedia Search Engine");
+        Scanner scanner = new Scanner(System.in);
+        while(true)
+        {
+            System.out.print("Enter your query (or type 'exit' to quit):");
+            query = scanner.nextLine();
+            if(query.equals("exit"))
+            {
+                System.out.println("the program exited.") ;
+                break ;
+            }
+            TextProcessor textProcessor = new TextProcessor();
+            List<String> words = textProcessor.processText(query) ;
+        }
+
     }
 }
