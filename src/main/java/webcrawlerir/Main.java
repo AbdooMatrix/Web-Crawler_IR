@@ -3,13 +3,11 @@ package webcrawlerir;
 import webcrawlerir.indexing.InvertedIndex;
 import webcrawlerir.indexing.Posting;
 import webcrawlerir.processing.QueryProcessor;
+import webcrawlerir.processing.Stemmer;
 import webcrawlerir.processing.TFIDFCalculator;
 import webcrawlerir.processing.TextProcessor;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,19 +24,8 @@ public class Main {
         // Step 3 : Print the inverted index
         invertedIndex.printIndex();
 
-        // Step 4: Verify the inverted index
-        String testTerm = "pharaoh"; // Example term to verify
-        List<Posting> postings = invertedIndex.getIndex().get(testTerm);
 
-        if (postings != null) {
-            System.out.println("Term '" + testTerm + "' is mapped to the following documents:");
-            for (Posting posting : postings) {
-                System.out.println(posting);
-            }
-        } else {
-            System.out.println("Term '" + testTerm + "' is not found in the inverted index.");
-        }
-        // Step 5: TF-IDF Calculator
+        // Step 4: TF-IDF Calculator
         int documentSize=invertedIndex.getTotalDocs();
         HashMap<String, List<Posting>> inde=invertedIndex.getIndex();
         TFIDFCalculator calculator = new TFIDFCalculator( documentSize,inde);
@@ -54,21 +41,31 @@ public class Main {
 
 
 
-        // step 6: Handling user query
+        // step 5: Handling user query
         String query ;
+        List<String> words = new ArrayList<>() ;
         System.out.println("Welcome to the Wikipedia Search Engine");
         Scanner scanner = new Scanner(System.in);
         while(true)
         {
             System.out.print("Enter your query (or type 'exit' to quit):");
-            query = scanner.nextLine();
+            query = scanner.nextLine(); // get input
             if(query.equals("exit"))
             {
                 System.out.println("the program exited.") ;
                 break ;
             }
             TextProcessor textProcessor = new TextProcessor();
-            List<String> words = textProcessor.processText(query) ;
+            words = textProcessor.processText(query) ; // 1-tokenization
+
+            Stemmer stemmer = new Stemmer(); // 2-stemming
+            for(int i = 0 ; i < words.size() ; ++i){
+                stemmer.addString(words.get(i));
+                stemmer.stem();
+                String stemmedWord = stemmer.toString();
+                words.set(i, stemmedWord);
+            }
+
             QueryProcessor queryProcessor = new QueryProcessor(calculator);
             queryProcessor.processQuery(words);
         }

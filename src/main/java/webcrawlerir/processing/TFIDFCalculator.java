@@ -57,7 +57,7 @@ public class TFIDFCalculator {
         }
 
 
-        // calculate inverse document frequency
+        // calculate inverse document frequency (IDF)
 
         for (Map.Entry<String, List<Posting>> entry : Term_frequency_inverted.entrySet()) {
             String word = entry.getKey();
