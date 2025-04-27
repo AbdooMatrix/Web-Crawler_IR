@@ -140,6 +140,8 @@ public class TFIDFCalculator {
             System.out.println("----------------------------------------");
         }
     }
-
+    public HashMap<Integer,Double> Get_Norm(){
+        return Norm;
+    }
 
 }
