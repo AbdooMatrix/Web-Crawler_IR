@@ -11,9 +11,7 @@ public class QueryProcessor {
         this.textProcessor = new TextProcessor();
     }
 
-    public void processQuery(String query) {
-        //Tokenize
-        List<String> tokens = textProcessor.processText(query);
+    public void processQuery(List<String> tokens) {
 
         //Count TF in query
         Map<String, Integer> queryTermFreq = new HashMap<>();
@@ -37,6 +35,12 @@ public class QueryProcessor {
             }
         }
         queryNorm = Math.sqrt(queryNorm);
+
+        System.out.println("==== Query TF-IDF Vector ====");
+        for (Map.Entry<String, Double> entry : queryTfIdf.entrySet()) {
+            System.out.println("Term: " + entry.getKey() + ", TF-IDF: " + entry.getValue());
+        }
+        System.out.println("Query Norm: " + queryNorm);
 
         if (queryTfIdf.isEmpty()) {
             System.out.println("No matching terms found in documents for this query.");

@@ -69,6 +69,8 @@ public class Main {
             }
             TextProcessor textProcessor = new TextProcessor();
             List<String> words = textProcessor.processText(query) ;
+            QueryProcessor queryProcessor = new QueryProcessor(calculator);
+            queryProcessor.processQuery(words);
         }
 
     }
