@@ -55,6 +55,10 @@ public class Main {
                 System.out.println("the program exited.");
                 break;
             }
+            else if(query.equals("")) {
+                System.out.println("Please enter a valid query.");
+                continue;
+            }
 
             // Process input text: tokenize
             TextProcessor textProcessor = new TextProcessor();
