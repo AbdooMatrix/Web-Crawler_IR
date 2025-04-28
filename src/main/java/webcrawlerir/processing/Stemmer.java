@@ -5,13 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Stemmer {
-    private char[] b;
-    private int i,     /* offset into b */
-            i_end, /* offset to end of stemmed word */
-            j, k;
-    private static final int INC = 50;
+    private char[] b; // word buffer
+    private int i; // index for buffer
+    private int i_end; // end index of word after stemming
+    private int j, k; // temporary indices used in processing
+    private static final int INC = 50; // buffer growth size
 
-    /* unit of size whereby b is increased */
     public Stemmer() {
         b = new char[INC];
         i = 0;
@@ -52,22 +51,15 @@ public class Stemmer {
         return b;
     }
 
-    private final boolean cons(int i) {
+    private boolean cons(int i) {
         switch (b[i]) {
-            case 'a':
-            case 'e':
-            case 'i':
-            case 'o':
-            case 'u':
-                return false;
-            case 'y':
-                return (i == 0) ? true : !cons(i - 1);
-            default:
-                return true;
+            case 'a': case 'e': case 'i': case 'o': case 'u': return false;
+            case 'y': return (i == 0) ? true : !cons(i - 1);
+            default: return true;
         }
     }
 
-    private final int m() {
+    private int m() {
         int n = 0;
         int i = 0;
         while (true) {
@@ -93,48 +85,50 @@ public class Stemmer {
         }
     }
 
-    private final boolean vowelinstem() {
-        int i;
-        for (i = 0; i <= j; i++) if (!cons(i)) return true;
+    private boolean vowelinstem() {
+        for (int i = 0; i <= j; i++) {
+            if (!cons(i)) return true;
+        }
         return false;
     }
 
-    private final boolean doublec(int j) {
+    private boolean doublec(int j) {
         if (j < 1) return false;
         if (b[j] != b[j - 1]) return false;
         return cons(j);
     }
 
-    private final boolean cvc(int i) {
+    private boolean cvc(int i) {
         if (i < 2 || !cons(i) || cons(i - 1) || !cons(i - 2)) return false;
-        {
-            int ch = b[i];
-            if (ch == 'w' || ch == 'x' || ch == 'y') return false;
-        }
-        return true;
+        int ch = b[i];
+        return ch != 'w' && ch != 'x' && ch != 'y';
     }
 
-    private final boolean ends(String s) {
+    private boolean ends(String s) {
         int l = s.length();
         int o = k - l + 1;
         if (o < 0) return false;
-        for (int i = 0; i < l; i++) if (b[o + i] != s.charAt(i)) return false;
+        for (int i = 0; i < l; i++) {
+            if (b[o + i] != s.charAt(i)) return false;
+        }
         j = k - l;
         return true;
     }
 
-    private final void setto(String s) {
+    private void setto(String s) {
         int l = s.length();
         int o = j + 1;
-        for (int i = 0; i < l; i++) b[o + i] = s.charAt(i);
+        for (int i = 0; i < l; i++) {
+            b[o + i] = s.charAt(i);
+        }
         k = j + l;
     }
 
-    private final void r(String s) {
+    private void r(String s) {
         if (m() > 0) setto(s);
     }
 
-    private final void step1() {
+    private void step1() {
         if (b[k] == 's') {
             if (ends("sses")) k -= 2;
             else if (ends("ies")) setto("i");
@@ -149,19 +143,19 @@ public class Stemmer {
             else if (ends("iz")) setto("ize");
             else if (doublec(k)) {
                 k--;
-                {
-                    int ch = b[k];
-                    if (ch == 'l' || ch == 's' || ch == 'z') k++;
-                }
-            } else if (m() == 1 && cvc(k)) setto("e");
+                int ch = b[k];
+                if (ch == 'l' || ch == 's' || ch == 'z') k++;
+            } else if (m() == 1 && cvc(k)) {
+                setto("e");
+            }
         }
     }
 
-    private final void step2() {
+    private void step2() {
         if (ends("y") && vowelinstem()) b[k] = 'i';
     }
 
-    private final void step3() {
+    private void step3() {
         if (k == 0) return;
         switch (b[k - 1]) {
             case 'a':
@@ -203,7 +197,7 @@ public class Stemmer {
         }
     }
 
-    private final void step4() {
+    private void step4() {
         switch (b[k]) {
             case 'e':
                 if (ends("icate")) { r("ic"); break; }
@@ -223,7 +217,7 @@ public class Stemmer {
         }
     }
 
-    private final void step5() {
+    private void step5() {
         if (k == 0) return;
         switch (b[k - 1]) {
             case 'a':
@@ -263,11 +257,11 @@ public class Stemmer {
         if (m() > 1) k = j;
     }
 
-    private final void step6() {
+    private void step6() {
         j = k;
         if (b[k] == 'e') {
             int a = m();
-            if (a > 1 || a == 1 && !cvc(k - 1)) k--;
+            if (a > 1 || (a == 1 && !cvc(k - 1))) k--;
         }
         if (b[k] == 'l' && doublec(k) && m() > 1) k--;
     }
