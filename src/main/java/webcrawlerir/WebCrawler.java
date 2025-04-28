@@ -65,6 +65,9 @@ public class WebCrawler {
                     && !visitedUrls.contains(url)
                     && !urlQueue.contains(url)
                     && visitedUrls.size() < MAX_PAGES) {
+                if (url.contains("Special:Random")) {
+                    continue;
+                }
                 urlQueue.add(url);
             }
         }
